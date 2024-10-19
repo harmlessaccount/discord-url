@@ -1,0 +1,29 @@
+[
+    {
+        "url": "https://discord.com/api/v10/users/@me",
+        "token": "true",
+        "payload": "",
+        "method": "GET"
+    },
+    {
+        "url": "https://discord.com/api/v10/users/@me/guilds",
+        "token": "true",
+        "payload": "",
+        "method": "GET"
+    },
+    {
+        "url": "https://discord.com/api/v9/channels/{channel_id}/messages?limit={limit}",
+        "token": "true",
+        "payload": "",
+        "method": "GET"
+    },
+    {
+        "url": "https://discord.com/api/v9/channels/{channel_id}/messages",
+        "token": "true",
+        "payload": {
+            "mobile_network_type": "unknown",
+            "content": "{content}"
+        },
+        "method": "POST"
+    }
+]

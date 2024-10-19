@@ -1,0 +1,3 @@
+token: "" # put your token inside quotes
+include: # leave empty if none
+exclude: # leave empty if none, you can do "all" to exclude all urls, and only leave out the urls you want to test in "include"
