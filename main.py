@@ -66,7 +66,6 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
                 except json.JSONDecodeError:
                     pass
 
-            # Anonymize aiohttp response if flag is set
             if anonymize and aiohttpResp and isinstance(aiohttpResp, str):
                 try:
                     aiohttpJson = json.loads(aiohttpResp)
@@ -94,7 +93,6 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
                 except json.JSONDecodeError:
                     pass
 
-            # Anonymize TLS response if flag is set
             if anonymize and tlsResp and isinstance(tlsResp, str):
                 try:
                     tlsJson = json.loads(tlsResp)
@@ -121,7 +119,6 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
             if showTls and tlsResp:
                 tlsRespDisplay = json.dumps(tlsResp, indent=4) if isinstance(tlsResp, dict) else (tlsResp[:100] + "..." if len(tlsResp) > 100 else tlsResp)
 
-        # Print URL and responses
         console.print(f"\n[bold cyan]Testing URL:[/bold cyan] [underline]{updatedUrl}[/underline]")
 
         if showAiohttp:
@@ -132,7 +129,6 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
             console.print(Panel(f"[bold yellow]TLS Client Response ({tlsStatus}):[/bold yellow]\n{tlsRespDisplay}",
                                 title=f"[bold magenta]Method: {method}[/bold magenta]", expand=False))
 
-        # Append to results
         results.append({
             "url": updatedUrl,
             "method": method,
@@ -140,7 +136,6 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
             "tls_response": tlsResp if showTls else None
         })
 
-        # Apply delay if needed
         if delay > 0:
             sleep(delay / 1000)  # Converts ms to seconds
 
