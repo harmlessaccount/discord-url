@@ -20,8 +20,8 @@ The project has the purpose of checking on updates of the Discord anti-bot  and 
 To get started, clone the repository and install the necessary dependencies:
 
 ```bash
-git clone https://github.com/harmlessaccount/discord-url-tester
-cd discord-url-tester
+git clone https://github.com/harmlessaccount/discord-url
+cd discord-url
 pip install -r requirements.txt
 ```
 ## Configuration
