@@ -1,0 +1,4 @@
+aiohttp==3.9.5
+PyYAML==6.0.2
+rich==13.9.2
+tls_client==1.0.1
