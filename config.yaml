@@ -1,3 +1,12 @@
 token: "" # put your token inside quotes
+
 include: # leave empty if none
+
 exclude: # leave empty if none, you can do "all" to exclude all urls, and only leave out the urls you want to test in "include"
+
+
+
+
+# Will only send request to those 2 URLs:
+# include: ["https://discord.com/api/v10/users/@me/guilds", "https://discord.com/api/v9/channels/{channel_id}/messages?limit={limit}"]
+#exclude: "all"

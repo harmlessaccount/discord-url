@@ -33,7 +33,7 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
 
     if include:
         urls = [url for url in urls if any(incl in url['url'] for incl in include)]
-    if exclude:
+    if exclude and exclude != "all":
         urls = [url for url in urls if not any(exc in url['url'] for exc in exclude)]
 
     for urlData in urls:  # Iterate through all URLs and make requests
@@ -51,9 +51,10 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
         updatedUrl = replace_placeholders(url, params)
         updatedPayload = replace_placeholders(payload, params)
 
-        aiohttpResp, aiohttpStatus = "[dim]Skipped[/dim]", None
-        tlsResp, tlsStatus = "[dim]Skipped[/dim]", None
+        aiohttpResp, aiohttpStatus = None, None
+        tlsResp, tlsStatus = None, None
 
+        # Only run aiohttp logic if the --aiohttp flag is provided
         if showAiohttp:
             aiohttpResp, aiohttpStatus = await method_map.get(method, lambda *args: (f"[bold red]Unsupported method:[/bold red]", 405))(updatedUrl, method, headers, updatedPayload, proxy)
 
@@ -65,6 +66,23 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
                 except json.JSONDecodeError:
                     pass
 
+            # Anonymize aiohttp response if flag is set
+            if anonymize and aiohttpResp and isinstance(aiohttpResp, str):
+                try:
+                    aiohttpJson = json.loads(aiohttpResp)
+                    aiohttpJson = anonymizer(aiohttpJson)  # Anonymize the response
+                    aiohttpResp = json.dumps(aiohttpJson)  # Convert back to string
+                except json.JSONDecodeError:
+                    console.print("[bold red]Failed to decode JSON for aiohttp response.[/bold red]")
+
+            if aiohttpStatus in [200, 204] and not aiohttpResp:
+                aiohttpRespDisplay = "[bold green]Success[/bold green]: No content returned [bold green](OK)[/bold green]"
+            elif aiohttpResp:
+                aiohttpRespDisplay = json.dumps(aiohttpResp, indent=4) if isinstance(aiohttpResp, dict) else (aiohttpResp[:100] + "..." if len(aiohttpResp) > 100 else aiohttpResp)
+            else:
+                aiohttpRespDisplay = "[dim]Skipped[/dim]"
+
+        # Only run TLS logic if the --tls flag is provided
         if showTls:
             tlsResp, tlsStatus = request_tls(updatedUrl, method, headers, updatedPayload, proxy)
 
@@ -76,7 +94,8 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
                 except json.JSONDecodeError:
                     pass
 
-            if tlsResp and isinstance(tlsResp, str):
+            # Anonymize TLS response if flag is set
+            if anonymize and tlsResp and isinstance(tlsResp, str):
                 try:
                     tlsJson = json.loads(tlsResp)
                     tlsJson = anonymizer(tlsJson)  # Anonymize the response
@@ -84,23 +103,25 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
                 except json.JSONDecodeError:
                     console.print("[bold red]Failed to decode JSON for TLS response.[/bold red]")
 
-        if anonymize and aiohttpResp and isinstance(aiohttpResp, str):
-            try:
-                aiohttpJson = json.loads(aiohttpResp)
-                aiohttpJson = anonymizer(aiohttpJson)  # Anonymize the response
-                aiohttpResp = json.dumps(aiohttpJson)  # Convert back to string
-            except json.JSONDecodeError:
-                console.print("[bold red]Failed to decode JSON for aiohttp response.[/bold red]")
+            if tlsStatus in [200, 204] and not tlsResp:
+                tlsRespDisplay = "[bold green]Success[/bold green]: No content returned [bold green](OK)[/bold green]"
+            elif tlsResp:
+                tlsRespDisplay = json.dumps(tlsResp, indent=4) if isinstance(tlsResp, dict) else (tlsResp[:100] + "..." if len(tlsResp) > 100 else tlsResp)
+            else:
+                tlsRespDisplay = "[dim]Skipped[/dim]"
 
-        # Full output
         if showFull:
-            aiohttpRespDisplay = aiohttpResp
-            tlsRespDisplay = tlsResp
+            if showAiohttp and aiohttpResp:
+                aiohttpRespDisplay = aiohttpResp
+            if showTls and tlsResp:
+                tlsRespDisplay = tlsResp
         else:
-            # Truncated output
-            aiohttpRespDisplay = json.dumps(aiohttpResp, indent=4) if isinstance(aiohttpResp, dict) else (aiohttpResp[:100] + "..." if len(aiohttpResp) > 100 else aiohttpResp) 
-            tlsRespDisplay = json.dumps(tlsResp, indent=4) if isinstance(tlsResp, dict) else (tlsResp[:100] + "..." if len(tlsResp) > 100 else tlsResp)
+            if showAiohttp and aiohttpResp:
+                aiohttpRespDisplay = json.dumps(aiohttpResp, indent=4) if isinstance(aiohttpResp, dict) else (aiohttpResp[:100] + "..." if len(aiohttpResp) > 100 else aiohttpResp)
+            if showTls and tlsResp:
+                tlsRespDisplay = json.dumps(tlsResp, indent=4) if isinstance(tlsResp, dict) else (tlsResp[:100] + "..." if len(tlsResp) > 100 else tlsResp)
 
+        # Print URL and responses
         console.print(f"\n[bold cyan]Testing URL:[/bold cyan] [underline]{updatedUrl}[/underline]")
 
         if showAiohttp:
@@ -111,6 +132,7 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
             console.print(Panel(f"[bold yellow]TLS Client Response ({tlsStatus}):[/bold yellow]\n{tlsRespDisplay}",
                                 title=f"[bold magenta]Method: {method}[/bold magenta]", expand=False))
 
+        # Append to results
         results.append({
             "url": updatedUrl,
             "method": method,
@@ -118,6 +140,7 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
             "tls_response": tlsResp if showTls else None
         })
 
+        # Apply delay if needed
         if delay > 0:
             sleep(delay / 1000)  # Converts ms to seconds
 

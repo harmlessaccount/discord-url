@@ -25,5 +25,14 @@
             "content": "{content}"
         },
         "method": "POST"
+    },
+    {
+        "url": "https://discord.com/api/webhooks/{webhook_id}/{webhook_token}",
+        "method": "POST",
+        "token": "false",
+        "payload": {
+          "content": "{content}",
+          "username": "{username}"
+        }
     }
 ]

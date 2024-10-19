@@ -11,8 +11,8 @@ def anonymizer(jsonData):
     if isinstance(jsonData, dict):
         anonymized = {}
         for key, value in jsonData.items():
-            if key == 'id':
-                anonymized[key] = random_digits(len(str(value)))  # Anonymize IDs
+            if key in ['id', 'phone']:
+                anonymized[key] = random_digits(len(str(value)))  # Anonymize IDs and phone numbers
             elif key == 'discriminator':
                 anonymized[key] = random_digits(len(str(value)))  # Anonymize usernames
             elif key in ['username', 'global_name']:
@@ -23,6 +23,8 @@ def anonymizer(jsonData):
                 anonymized[key] = "Harmless Guild"  # Anonymize guild names to a fixed value
             elif key in ['icon', 'banner']:
                 anonymized[key] = ''.join(random.choices('abcdef' + string.digits, k=32))  # Anonymize icons and banners
+            elif key in 'locale': 
+                anonymized[key] = "en-US" # Anonymize locale
             else:
                 anonymized[key] = value
         return anonymized
