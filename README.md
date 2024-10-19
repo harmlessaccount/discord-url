@@ -1,6 +1,6 @@
-# Discord URL Tester
+# Discord URL
 
-`discord-url-tester` is a Command Line Interface (CLI) tool designed to test Discord-related URLs using two HTTP clients: `aiohttp` and `tls_client`. You can set different requests on `urls.json`. 
+`discord-url` is a Command Line Interface (CLI) tool designed to test Discord-related URLs using two HTTP clients: `aiohttp` and `tls_client`. You can set different requests on `urls.json`. 
 
 The CLI supports dynamic parameters, request retries, and offers options for anonymizing sensitive data within responses.
 
