@@ -122,7 +122,8 @@ If your request requires an user token, set `token` to `true`. You can change th
 }
 ```
 
-Contributions are very easy to do and are always appreciated. If you can, contribute.
+
+Contributions are very easy to do and are always appreciated. If you can, contribute. You may also use the simple web interface I recently released: [discord-url-web](https://github.com/harmlessaccount/discord-url-web)
 
 ## Considerations
 
