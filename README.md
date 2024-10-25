@@ -14,6 +14,7 @@ The project has the purpose of checking on updates of the Discord anti-bot  and 
 - **Anonymization**: Option to anonymize sensitive data in responses. This is not 100% precise, do your own diligence.
 - **Results Export**: Save results to `.json` or `.txt` files.
 - **Retry on 429 (Rate-Limit)**: Automatically retries when rate-limited by Discord, based on the `wait_for` response key.
+- **Custom headers**: Allows you to use custom headers when making requests, which is set on `urls.json`.
 
 ## Installation
 
@@ -105,7 +106,8 @@ You may contribute by adding more URLs to `urls.json`, the format is as follows:
     "payload": {
         "content": "{content}",
         "username": "Harmless"
-    }
+    },
+    "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"}
 }
 ```
 
