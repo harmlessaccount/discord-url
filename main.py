@@ -45,6 +45,12 @@ async def test_urls(showTls, showAiohttp, showFull, delay, outputFile, params, a
         headers = {}
         if requiresToken:
             headers['Authorization'] = f"{token}"
+
+        # Custom headers logic
+        if 'headers' in urlData and isinstance(urlData['headers'], dict):
+            for header_key, header_value in urlData['headers'].items():
+                headers[header_key] = replace_placeholders(header_value, params)  # Replace placeholders if any
+
         proxy = None
 
         # Replace any placeholders in URL and payload dynamically using the params passed from CLI
