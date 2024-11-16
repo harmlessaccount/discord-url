@@ -1,5 +1,5 @@
 import aiohttp
-import tls_client
+from curl_cffi import requests
 from time import sleep
 
 # Helper function to handle HTTP requests for both aiohttp and tls_client
@@ -32,7 +32,7 @@ async def request_aiohttp(url, method, headers, payload=None, proxy=None):
 
 # tls request handler
 def request_tls(url, method, headers, payload=None, proxy=None):
-    session = tls_client.Session(client_identifier="chrome112", random_tls_extension_order=True)
+    session = requests.Session()
 
     methods = {
         "POST": session.post,
@@ -48,7 +48,7 @@ def request_tls(url, method, headers, payload=None, proxy=None):
         return f"[bold red]Unsupported HTTP method:[/bold red] {method}", 405
 
     try:
-        res = methods[method](url, json=payload, headers=headers, proxy=proxy)
+        res = methods[method](url, json=payload, headers=headers, proxy=proxy, impersonate="chrome")
         return res.text, res.status_code
     except Exception as e:
         return f"[bold red]Error fetching {url} with tls_client:[/bold red] {e}", 500
